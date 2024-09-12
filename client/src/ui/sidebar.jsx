@@ -104,7 +104,7 @@ export const MobileSidebar = ({ className, children, ...props }) => {
           >
             <div
               className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200"
-              onClick={() => setOpen(!open)}
+              onClick={() => setOpen(false)}
             >
               <IconX />
             </div>
@@ -117,25 +117,36 @@ export const MobileSidebar = ({ className, children, ...props }) => {
 };
 
 export const SidebarLink = ({ link, className, onClick, isActive, ...props }) => {
-  const { open, animate } = useSidebar();
+  const { open, setOpen, animate } = useSidebar();
+
+  const handleClick = (e) => {
+    if (onClick) {
+      onClick(e);
+    }
+    // Close the sidebar on mobile when a link is clicked
+    if (window.innerWidth < 768) {
+      setOpen(false);
+    }
+  };
+
   return (
     <Link
       to={link.href}
       className={cn(
         "flex items-center justify-start gap-2 group/sidebar py-2 rounded-md transition-colors duration-150",
         isActive
-          ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100"
+          ? "bg-neutral-200 dark:bg-neutral-700 text-orange-600 dark:text-neutral-100"
           : "text-neutral-700 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700",
         open ? "px-2" : "px-[14px]", // Adjust padding based on sidebar state
         className
       )}
-      onClick={onClick}
+      onClick={handleClick}
       {...props}
     >
       {React.cloneElement(link.icon, {
         className: cn(
           "flex-shrink-0 w-5 h-5", // Add fixed width and height
-          isActive ? "text-neutral-900 dark:text-neutral-100" : "text-neutral-500 dark:text-neutral-400"
+          isActive ? "text-orange-600 dark:text-neutral-100" : "text-neutral-500 dark:text-neutral-400"
         ),
       })}
       <motion.span
